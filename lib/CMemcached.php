@@ -76,11 +76,6 @@ class CMemcached {
 	}
 		
 	//*increment/decrement will not change TTL of a item
-	public function increment($key, $offset=1) {
-		
-	}
-	
-	//*increment/decrement will not change TTL of a item
 	public function increment($key, $offset=1, $initial_value=0, $expiration=NULL) {
 		if(is_null($expiration)) {
 			$expiration = $this->_c['expiration'];
