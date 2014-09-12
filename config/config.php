@@ -6,6 +6,6 @@ return array(
 		),
 		'namespace' => 'test',
 		'version' => '1',
-		'expiration' => 3600	//1 hour
+		'expiration' => 3600,	//1 hour
 		'logerror' => true
 	);
