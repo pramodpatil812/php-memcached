@@ -1,6 +1,7 @@
 <?php
 namespace Pramod\Memcached;
 class CMemcached {
+	const DEFAULT_EXPIRATION = 3600;	//1 hour
 	protected $_m;
 	private $_c;
 	
@@ -9,10 +10,28 @@ class CMemcached {
 			throw new \RuntimeException("Extension memcached not loaded.");
 		}
 		
-		if(!isset($config['expiration']) || !ctype_digit($config['expiration']) || $config['expiration']<0) {
+		if(isset($config['expiration']) && (!ctype_digit($config['expiration']) || $config['expiration']<0)) {
 			throw new \InvalidArgumentException("Default expiration time is not valid.");
 		}
 		
+		$this->_c = $config;
+		
+		if(!isset($this->_c['expiration']) || $this->_c['expiration'] == '') {
+			$this->_c['expiration'] = self::DEFAULT_EXPIRATION;
+		}
+		
+		if(!isset($this->_c['namespace'])) {
+			$this->_c['namespace'] = '';
+		}
+	
+		if(!isset($this->_c['version'])) {
+			$this->_c['version'] = '';
+		}
+		
+		if(!isset($this->_c['logerror'])) {
+			$this->_c['logerror'] = false;
+		}
+
 		$this->_m = new \Memcached();
 		
 		if(isset($config['server']) && is_array($config['server'])) {
@@ -24,8 +43,6 @@ class CMemcached {
 		}
 		
 		//$this->_m->setOption(\Memcached::OPT_BINARY_PROTOCOL, true);
-
-		$this->_c = $config;
 	}
 
 	public function add($key, $value, $expiration=NULL) {
@@ -89,7 +106,7 @@ getResultCode() and getResultMessage() returns 38 and INVALID ARGUMENTS respecti
 		//if(!$this->_m->delete($this->createKey($key), $time)) {
 		if(!$this->_m->delete($this->createKey($key))) {
 			$result_code = $this->_m->getResultCode();
-			if($result_code === \Memcached::RES_NOTSTORED) {
+			if($result_code === \Memcached::RES_NOTFOUND) {
 				$this->logError(__METHOD__.":".__LINE__.":Unable to delete key $key. Key doesn't exist. Result code: $result_code. Result message: ".$this->_m->getResultMessage());
 			}
 			else {

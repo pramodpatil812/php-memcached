@@ -80,15 +80,15 @@ class CMemcachedTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($config['server'], (new CMemcached($config))->getServerList());
     }*/
     
-    public function testAddWithDefaultExpiry() {
+    public function testAdd() {
     	$obj = new CMemcached(require(realpath(dirname(__FILE__) . '/../config/config.php')));
     	$this->assertEquals(true, $obj->add('testkey1', 'testvalue1'));
-    }
-    
-    public function testAddWithExpiry() {
-    	$obj = new CMemcached(require(realpath(dirname(__FILE__) . '/../config/config.php')));
     	$this->assertEquals(true, $obj->add('testkey2', 'testvalue2', 600));
     	$this->assertEquals(false, $obj->add('testkey2', 'testvalue2', 600));
+    	
+    	$obj1 = new CMemcached(array());
+    	$obj1->addServer('nonexistentserver', 11211);
+    	$this->assertEquals(false, $obj1->set('testkey2', 'testvalue2', 600));
     }
     
     public function testIsExceptionRaisedFromAddForEmptyKey() {
