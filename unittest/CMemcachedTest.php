@@ -1,5 +1,6 @@
 <?php
 namespace Pramod\Memcached;
+
 require_once(realpath(dirname(__FILE__) . '/../lib/CMemcached.php'));
 
 class CMemcachedTest extends \PHPUnit_Framework_TestCase
