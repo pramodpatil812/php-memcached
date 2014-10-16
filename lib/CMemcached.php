@@ -1,12 +1,27 @@
 <?php
 namespace Pramod\Memcached;
 
+/**
+ * Wrapper class for php memcached.
+ * @author Pramod Patil
+ * @link http://php.net/manual/en/class.memcached.php
+ */
 class CMemcached
 {
+	/** default TTL(in seconds) for objects when the same in not provided via constructor argument. */
     const DEFAULT_EXPIRATION = 3600;    //1 hour
+    
+    /** @var object $m holder for native memcached class object */
     protected $m;
+    
+    /** @var array $c holds an array of configurations */
     private $c;
 
+	/**
+	 @param array $config array of elements, each of which represents a configuration for memcached such as default expiration, namespace etc.
+ 	 @throws RuntimeException If the memcached php extension is not loaded.
+	 @throws InvalidArgumentException If the 'expiration' key of the passed param is not integer or negative.
+	 */
     public function __construct(array $config)
     {
         if (!extension_loaded('memcached')) {
@@ -48,6 +63,14 @@ class CMemcached
         //$this->m->setOption(\Memcached::OPT_BINARY_PROTOCOL, true);
     }
 
+	/**
+	 Add atomically an object in the memcached.
+	 @param string $key name of the object to be stored.
+ 	 @param mixed $value value to be stored.
+ 	 @param int $expiration TTL for the key.
+	 @throws InvalidArgumentException If the $key is empty.
+	 @return boolean returns true if $key is successfully added, false if the key is already present or some error occured.
+	 */
     public function add($key, $value, $expiration = null)
     {
         if (trim($key)=='') {
@@ -72,6 +95,13 @@ class CMemcached
         return true;
     }
 
+	/**
+	 set an object in the memcached.
+	 @param string $key name of the object to be stored.
+ 	 @param mixed $value value to be stored.
+ 	 @param int $expiration TTL for the key.
+	 @return boolean returns true if $value is successfully stored, false otherwise.
+	 */
     public function set($key, $value, $expiration = null)
     {
         if (is_null($expiration)) {
